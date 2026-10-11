@@ -1,0 +1,16 @@
+{
+  "name": "bdon-mygo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bash scripts/dev.sh",
+    "build": "bash scripts/build-release.sh",
+    "build:macos": "bash scripts/build-release.sh darwin/arm64",
+    "build:release": "bash scripts/build-release.sh",
+    "dev:pairing": "bash scripts/dev-pairing.sh"
+  },
+  "devDependencies": {
+    "mygo-cli": "0.3.7"
+  }
+}

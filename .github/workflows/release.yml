@@ -1,0 +1,98 @@
+name: Release
+
+# Push a tag v<version> (the version of package.json) to build macOS (DMG)
+# and upload the files to a draft release, which you review and publish. The engines come from the li-yifei/ournotes-deck
+# release named in docs/native-engine-release.txt, which must exist first.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write # the draft release, and the uploads to it
+
+jobs:
+  draft-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check the version
+        run: test "$GITHUB_REF_NAME" = "v$(jq -r .version package.json)"
+      - name: Create the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
+              --draft --verify-tag --title "$GITHUB_REF_NAME" --generate-notes
+          fi
+
+  build:
+    needs: draft-release
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS builds natively with cgo, for the direct USB transport
+          # (gousb + libusb, bundled in the app).
+          - { name: macOS, os: macos-14, platforms: "darwin/arm64" }
+          # TODO(windows): Windows releases are paused. Re-enable this entry
+          # (cross-compiled without cgo on Linux, portable zips) when they ship.
+          # - { name: Windows, os: ubuntu-latest, platforms: "windows/amd64 windows/arm64" }
+          # TODO(linux): Linux releases are deferred. When they ship, add
+          # "linux/amd64 linux/arm64" here and to scripts/build-release.sh.
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Install libusb
+        if: runner.os == 'macOS'
+        run: brew install libusb pkg-config
+      - name: Download the native engines
+        # From the li-yifei/ournotes-deck release named in
+        # docs/native-engine-release.txt, each checked against its SHA256SUMS.
+        run: |
+          platforms=()
+          for p in ${{ matrix.platforms }}; do platforms+=("${p/\//-}"); done
+          OURNOTES_ENGINE_DIR="$PWD/.native-engines" bash scripts/fetch-native-engine.sh release "${platforms[@]}"
+      - name: Test
+        run: go test ./...
+      - name: Build
+        env:
+          OURNOTES_ENGINE_DIR: ${{ github.workspace }}/.native-engines
+          OURNOTES_ENGINE_FETCH: "0"
+          OURNOTES_SAVE_KEY: ${{ secrets.OURNOTES_SAVE_KEY }}
+          OURNOTES_SAVE_MAGIC: ${{ secrets.OURNOTES_SAVE_MAGIC }}
+        run: |
+          test -n "$OURNOTES_SAVE_KEY" && test -n "$OURNOTES_SAVE_MAGIC" ||
+            { echo "::error::Set the OURNOTES_SAVE_KEY and OURNOTES_SAVE_MAGIC repository secrets"; exit 1; }
+          bash scripts/build-release.sh ${{ matrix.platforms }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist-${{ runner.os }}
+          path: |
+            dist/*
+            !dist/SHA256SUMS
+          if-no-files-found: error
+
+  upload:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: dist-*
+          path: dist
+          merge-multiple: true
+      - name: Upload to the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd dist
+          sha256sum -- * > SHA256SUMS
+          cat SHA256SUMS
+          gh release upload "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --clobber -- *

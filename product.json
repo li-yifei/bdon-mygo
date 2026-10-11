@@ -1,0 +1,16 @@
+{
+  "name": "bdon-mygo",
+  "identifier": "io.github.li-yifei.bdonmygo",
+  "configDir": "bdon-mygo",
+  "credentialsDir": "bdon-mygo",
+  "legacyCredentialsDir": "ournotes",
+  "legacyName": "Our Notes Deck",
+  "legacyStorageDir": "storage",
+  "devStorageDir": ".local-storage",
+  "linuxBinary": "bdon-mygo",
+  "pairingServicePrefix": "bdon-mygo-",
+  "stateKeys": {
+    "main": "deck-main",
+    "settings": "native-adb-settings"
+  }
+}

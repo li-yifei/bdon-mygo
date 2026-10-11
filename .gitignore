@@ -1,0 +1,24 @@
+
+node_modules/
+frontend/dist/
+.mygo/
+frontend/src/mygo.ts
+build/
+*.app/
+*.dylib
+*.so
+/bdon-mygo
+
+.local-storage/
+
+.native-src/
+
+# Per-platform engines staged by scripts/build-release.sh
+/resources/darwin-*/
+/resources/linux-*/
+/resources/windows-*/
+/.native-engines/
+/dist/
+
+# Generated build files
+/zz_*.go
