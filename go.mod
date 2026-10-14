@@ -4,7 +4,7 @@ go 1.27.1
 
 require (
 	github.com/ebitengine/purego v0.11.1
-	github.com/egoist/mygo v0.3.7
+	github.com/egoist/mygo v0.4.8
 	github.com/google/gousb v1.1.3
 	github.com/hashicorp/mdns v1.0.5
 	github.com/pgaskin/go-adb v0.0.0-20260909040028-2bc9b939919d

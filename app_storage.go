@@ -55,7 +55,11 @@ func legacyStorageDirs(executable, home string) []string {
 	return dirs
 }
 
-// dirIsEmpty reports whether dir is missing or holds only Finder metadata.
+// ignorableFiles do not count as user data: Finder metadata, and the window
+// positions MyGo saves in the same directory.
+var ignorableFiles = map[string]bool{".DS_Store": true, "window-state.json": true}
+
+// dirIsEmpty reports whether dir is missing or holds only ignorable files.
 func dirIsEmpty(dir string) (bool, error) {
 	entries, err := os.ReadDir(dir)
 	if errors.Is(err, fs.ErrNotExist) {
@@ -65,7 +69,7 @@ func dirIsEmpty(dir string) (bool, error) {
 		return false, err
 	}
 	for _, e := range entries {
-		if e.Name() != ".DS_Store" {
+		if !ignorableFiles[e.Name()] {
 			return false, nil
 		}
 	}
@@ -107,8 +111,14 @@ func migrateLegacyStorage(dest string, candidates []string) (string, error) {
 			os.RemoveAll(stage)
 			return "", err
 		}
-		// dest is missing or empty here; clear it so the rename can land.
-		os.Remove(filepath.Join(dest, ".DS_Store"))
+		// dest is missing or holds only ignorable files here; keep those the
+		// copy lacks, then clear dest so the rename can land.
+		for name := range ignorableFiles {
+			if _, err := os.Lstat(filepath.Join(stage, name)); errors.Is(err, fs.ErrNotExist) {
+				os.Rename(filepath.Join(dest, name), filepath.Join(stage, name))
+			}
+			os.Remove(filepath.Join(dest, name))
+		}
 		if err := os.Remove(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
 			os.RemoveAll(stage)
 			return "", err

@@ -72,6 +72,10 @@ func TestMigrateLegacyStorage(t *testing.T) {
 	if err := os.MkdirAll(dest, 0o700); err != nil { // present but empty
 		t.Fatal(err)
 	}
+	// Window positions saved by MyGo before the migration are not user data.
+	if err := os.WriteFile(filepath.Join(dest, "window-state.json"), []byte("{}"), 0o600); err != nil {
+		t.Fatal(err)
+	}
 	from, err := migrateLegacyStorage(dest, []string{filepath.Join(root, "missing"), legacy})
 	if err != nil || from != legacy {
 		t.Fatalf("migrate = %q, %v", from, err)
@@ -85,6 +89,9 @@ func TestMigrateLegacyStorage(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(legacy, "search-engine.json")); err != nil {
 		t.Fatal("legacy storage must stay in place")
+	}
+	if !isFile(filepath.Join(dest, "window-state.json")) {
+		t.Fatal("window state dropped by the migration")
 	}
 	// A non-empty destination is never overwritten.
 	if err := os.WriteFile(filepath.Join(legacy, "search-engine.json"), []byte(`{"mode":"custom"}`), 0o600); err != nil {
