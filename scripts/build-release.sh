@@ -95,10 +95,28 @@ if [[ -z "$engine_dir" ]]; then
     engine_dir="$root/.native-engines"
   fi
 fi
+# A staged engine directory names the engine commit it holds; refuse one built
+# from another revision than the pinned one.
+if [[ -f "$engine_dir/SOURCE_COMMIT" ]]; then
+  staged_commit="$(tr -d '[:space:]' < "$engine_dir/SOURCE_COMMIT")"
+  pinned_commit="$(tr -d '[:space:]' < "$root/docs/native-search-revision.txt")"
+  if [[ "$staged_commit" != "$pinned_commit" ]]; then
+    echo "$engine_dir holds engines from $staged_commit, but docs/native-search-revision.txt pins $pinned_commit." >&2
+    echo "Update or move that directory, or set OURNOTES_ENGINE_DIR." >&2
+    exit 1
+  fi
+fi
+pinned_release="${OURNOTES_ENGINE_RELEASE_TAG:-$(tr -d '[:space:]' < "$root/docs/native-engine-release.txt")}"
 missing=()
 for t in "${targets[@]}"; do
   platform="${t/\//-}"
-  [[ -f "$engine_dir/$platform/libournotes_ffi.$(engine_ext "$platform")" ]] || missing+=("$platform")
+  if [[ ! -f "$engine_dir/$platform/libournotes_ffi.$(engine_ext "$platform")" ]]; then
+    missing+=("$platform")
+  elif [[ "${OURNOTES_ENGINE_FETCH:-1}" != 0 && "$engine_dir" == "$root/.native-engines" && "$(cat "$engine_dir/$platform/release.txt" 2>/dev/null)" != "$pinned_release" ]]; then
+    # A download cached from another release than the pinned one.
+    rm -f "$engine_dir/$platform/libournotes_ffi.$(engine_ext "$platform")"
+    missing+=("$platform")
+  fi
 done
 if [[ ${#missing[@]} -gt 0 && "${OURNOTES_ENGINE_FETCH:-1}" != 0 ]]; then
   fetch_dir="$engine_dir"

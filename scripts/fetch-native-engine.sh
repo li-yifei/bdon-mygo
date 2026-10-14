@@ -72,6 +72,8 @@ release_engines() {
     cp "$stage/$asset" "$out/$platform/.libournotes_ffi.$ext.tmp"
     chmod 755 "$out/$platform/.libournotes_ffi.$ext.tmp"
     mv -f "$out/$platform/.libournotes_ffi.$ext.tmp" "$out/$platform/libournotes_ffi.$ext"
+    # Records the release, so a build can tell a cached engine is outdated.
+    echo "$tag" > "$out/$platform/release.txt"
     echo "Installed $out/$platform/libournotes_ffi.$ext ($expected)"
   done
 }
