@@ -102,12 +102,18 @@
           // The current page uses hasLuck as an unconditional UI support gate.
           // Advertise native support only after the exact original data is prepared;
           // keep the factual catalogue for routing and leave all mission bytes intact.
-          const nativeMode = await call('UseNativeSolver');
-          if (!nativeMode) {
-            if (this.luckMusicIds.size) {
-              try { await this.prepareNative(); }
-              catch (error) { host.lastFallbackError = String(error); }
+          let nativeMode = await call('UseNativeSolver');
+          if (nativeMode || this.luckMusicIds.size) {
+            try { await this.prepareNative(); }
+            catch (error) {
+              // An engine of another model than the page's keeps the page's
+              // solver, so results match the site; LUCK support is optional.
+              if (nativeMode && !String(error).includes('engine-model-mismatch')) throw error;
+              host.lastFallbackError = String(error);
+              nativeMode = false;
             }
+          }
+          if (!nativeMode) {
             if (this.closed) return;
             host.engine = 'bdon-original';
             this.delegate = Reflect.construct(OriginalWorker, this.workerArgs);
@@ -128,7 +134,7 @@
             return;
           }
           host.engine = 'native-rust';
-          const ready = await this.prepareNative();
+          const ready = this.nativeReady;
           this.emit({type: 'ready', ...ready, catalog: this.supportCatalog(this.catalog)});
           return ready;
         })();

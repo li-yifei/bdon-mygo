@@ -13,10 +13,11 @@
 
 在 bdon.moe 上组卡嫌慢、卡池要一张张录？bdon-mygo 把 **bdon 组卡页** 装进桌面窗口，计算交给 **原生多线程引擎**，用满全部 CPU 核心。连上手机还能 **一键把游戏存档导入卡池**，不用手动录卡。界面、数据和计算规则都和 bdon 网页版一致。
 
-bdon-mygo 是一个轻量的原生外壳（Go + WKWebView，基于 [MyGo](https://github.com/egoist/mygo)），在系统 WebView 中直接打开 Moenotes 站点的组卡工具 <https://bdon.moe/tools/deck>（适用于《BanG Dream! Our Notes》）。网页界面和数据都来自该站点本身，本应用不复制、不打包、不镜像其代码或数据，只增加两项功能：
+bdon-mygo 是一个轻量的原生外壳（Go + WKWebView，基于 [MyGo](https://github.com/egoist/mygo)），在系统 WebView 中直接打开 Moenotes 站点的组卡工具 <https://bdon.moe/tools/deck>（适用于《BanG Dream! Our Notes》）。网页界面和数据都来自该站点本身，本应用不复制、不打包、不镜像其代码或数据，只增加三项功能：
 
-1. **原生多线程计算引擎**：网页的组卡计算原本在浏览器 Worker 中运行。预加载脚本把 `/deck/deck-worker.js` 的计算协议转交给 Go → Rust FFI 原生引擎（[ournotes-deck](https://github.com/li-yifei/ournotes-deck)），引擎使用多个 CPU 核心，大卡池下搜索明显更快。网页下载的计算数据经过 SHA-256 校验后在本机计算，输入和结果与网页版保持一致；如果网页协议更新导致不兼容，应用会提示更新，不会给出错误结果。
+1. **原生多线程计算引擎**：网页的组卡计算原本在浏览器 Worker 中运行。预加载脚本把 `/deck/deck-worker.js` 的计算协议转交给 Go → Rust FFI 原生引擎（[ournotes-deck](https://github.com/li-yifei/ournotes-deck)），引擎使用多个 CPU 核心，大卡池下搜索明显更快。网页下载的计算数据经过 SHA-256 校验后在本机计算，输入和结果与网页版保持一致；如果网页协议更新导致不兼容，应用会提示更新，不会给出错误结果；网站的计算模型版本与原生引擎不一致时，自动改用网页自带的计算，结果与网站一致。
 2. **ADB 存档导入**：通过 USB 或无线调试（扫码或配对码）连接 Android 设备，读取本机游戏存档中的 `_player`，写入网页本机 IndexedDB 中的「卡池」。导入后无需逐张录入卡牌即可直接计算。注入脚本会拦截网页把账号存档或卡池写入云端的请求。
+3. **抢先补充新活动**：新活动、新卡或新歌上线而 bdon.moe 尚未收录时，在设置窗口「高级 → 游戏数据补充」点「更新游戏数据」，应用通过 ADB 读取设备上游戏的 Master 数据，补上缺少的活动、加成、卡牌和歌曲；新歌谱面从 bdon 谱面站读取（常常先在其他服务器上线），新卡卡面在日服路径缺失时读取其他服务器的同一张图。只补充 bdon.moe 缺少的条目，官方数据始终优先；bdon.moe 更新到同一版本后，补充内容自动退出。
 
 ![设备与存档设置窗口](docs/screenshots/settings-window.png)
 
@@ -108,6 +109,7 @@ bun run dev                           # 开发模式
 
 - **离开本机的数据**：只有加载 bdon.moe 网页产生的正常流量（`bdon.moe`、`assets.bdon.moe`、`storage.bdon.moe`），以及该网页自身加载的第三方资源。按照 [bdon.moe 隐私说明](https://bdon.moe/privacy)，这些资源包括 Google Analytics 和 Google Fonts。这些请求与用普通浏览器访问该网站相同，受 bdon.moe 的隐私政策约束。
 - **Platform-Tools**：首次需要 `adb` 时访问 `dl.google.com` 下载。
+- **游戏数据补充**：「更新游戏数据」通过 ADB 在本机读取设备上的游戏 Master 数据并保存在本机；新歌谱面与卡面从 `assets.bdon.moe` 读取，版本信息从 `storage.bdon.moe` 读取，不访问其他地址。
 - **本地网络**：无线调试配对时在本地网络进行 mDNS 发现（`_adb-tls-*`），不访问互联网。
 - **存档与账号 ID**：在本机解析，只写入 WebView 中 bdon.moe 页面的本地存储（IndexedDB / localStorage），**本应用不会上传到任何地方**。如果你在网页中登录 StarMoe 账号并使用其同步或公开主页功能，相关数据处理由 bdon.moe 负责。
 - 本应用没有遥测、统计、崩溃上报或自动更新请求。
@@ -137,6 +139,7 @@ bun run dev                           # 开发模式
 - **編成計算が速い**：bdon の編成ページの計算を、PC の全 CPU コアを使うネイティブエンジンで実行します。結果は Web 版と同じ計算規則です。
 - **セーブデータを取り込み**：Android 端末を USB またはワイヤレスデバッグで接続し、ゲームのセーブデータを bdon のカードプールへそのまま登録。カードを一枚ずつ入力する必要はありません。root は不要です。
 - **LUCK を含む激走楽曲**にも対応（ネイティブエンジン使用時）。
+- **新イベントを先取り**：bdon.moe が未収録の新イベント・新カード・新曲を、端末のゲームデータ（ADB 経由）と bdon の譜面サイトから補完します。公式データが常に優先され、bdon.moe が同じバージョンに追いつくと補完は自動的に外れます。
 - 現在の配布は macOS（Apple シリコン）版のみ。Windows 版は準備中です。セーブデータはローカルにのみ保存され、アップロードされません。
 
 [Releases](../../releases) から DMG をダウンロードし、`bdon-mygo.app` を「アプリケーション」にドラッグしてください。初回は右クリック →「開く」で起動します（ad-hoc 署名のため）。設定ウィンドウの右上で表示言語を選べます。
@@ -153,10 +156,11 @@ Bushiroad、Craft Egg、StarMoe / Moenotes とは関係のないファン制作�
 
 ### What it does
 
-bdon-mygo is an unofficial, lightweight native shell (Go + WKWebView, built on [MyGo](https://github.com/egoist/mygo)) that opens the Moenotes deck tool at <https://bdon.moe/tools/deck> for *BanG Dream! Our Notes* in the system WebView. The web UI and data come from that site as-is; the app does not copy, bundle or mirror its code or data. It adds two things:
+bdon-mygo is an unofficial, lightweight native shell (Go + WKWebView, built on [MyGo](https://github.com/egoist/mygo)) that opens the Moenotes deck tool at <https://bdon.moe/tools/deck> for *BanG Dream! Our Notes* in the system WebView. The web UI and data come from that site as-is; the app does not copy, bundle or mirror its code or data. It adds three things:
 
-1. **Native multithreaded engine.** A preload script routes the page's `/deck/deck-worker.js` calculation protocol through Go to a native Rust engine ([ournotes-deck](https://github.com/li-yifei/ournotes-deck)) over FFI. The engine uses several CPU cores, so searches over large card pools are much faster. Calculation data downloaded by the page is SHA-256 verified and computed locally; inputs and results match the web version. If the page's protocol changes, the app asks you to update instead of returning wrong results.
+1. **Native multithreaded engine.** A preload script routes the page's `/deck/deck-worker.js` calculation protocol through Go to a native Rust engine ([ournotes-deck](https://github.com/li-yifei/ournotes-deck)) over FFI. The engine uses several CPU cores, so searches over large card pools are much faster. Calculation data downloaded by the page is SHA-256 verified and computed locally; inputs and results match the web version. If the page's protocol changes, the app asks you to update instead of returning wrong results; when the site's calculation model differs from the native engine's, the app uses the page's own calculation, so results match the site.
 2. **ADB save import.** Connect an Android device over USB or wireless debugging (QR code or pairing code). The app reads `_player` from your local game save and fills the card pool in the page's local IndexedDB, so you no longer enter cards by hand. The preload script blocks the page's cloud writes of the account save or card pool.
+3. **New events ahead of bdon.moe.** When an event, card or song is out but bdon.moe does not list it yet, **Advanced → Game data supplement → Update game data** in the settings window reads the game's Master data from the device over ADB and fills in the missing events, bonuses, cards and songs. Charts of new songs come from bdon's chart site (they often appear there from another server first), and new cards' artwork is read from another server when the Japanese path lacks it. Only entries bdon.moe lacks are added and its data always wins; once bdon.moe reaches the same version, the supplement steps back by itself.
 
 ### Requirements
 
@@ -227,6 +231,7 @@ Checks: `go build ./...`, `go vet ./...`, `go test ./...`, `node_modules/.bin/my
 
 - **What leaves your Mac:** only the normal traffic of the bdon.moe page (`bdon.moe`, `assets.bdon.moe`, `storage.bdon.moe`) and whatever third parties that page loads itself. Per its [privacy notice](https://bdon.moe/privacy), that includes Google Analytics and Google Fonts. This is the same as opening the site in a browser, and bdon.moe's privacy policy governs it.
 - **Platform-Tools:** `dl.google.com`, the first time `adb` is needed.
+- **Game data supplement:** *Update game data* reads the game's Master data from the device over ADB and keeps it on this computer; new charts and artwork come from `assets.bdon.moe` and version information from `storage.bdon.moe`, nothing else.
 - **Local network:** mDNS discovery (`_adb-tls-*`) during wireless pairing. It never contacts the internet.
 - **Saves and account IDs** are parsed on your Mac and written only to the WebView's local storage for the bdon.moe page. **The app uploads them nowhere.** If you sign in to a StarMoe account on the page and use its sync or public-profile features, bdon.moe handles that data.
 - No telemetry, analytics, crash reporting, or update pings.

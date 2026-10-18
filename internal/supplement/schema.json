@@ -1,0 +1,632 @@
+{
+ "format": "ournotes.event-supplement-schema/1",
+ "master": {
+  "MasterArenaMusic": [],
+  "MasterBand": [
+   "_id",
+   "_nameTextID",
+   "_descriptionTextID",
+   "_mainColorCode",
+   "_subColorCode",
+   "_rankUpItemIdForRarityR",
+   "_rankUpItemIdForRaritySR",
+   "_rankUpItemIdForRaritySSR",
+   "_rankUpItemIdForRarityBD",
+   "_bgmSoundId",
+   "_memberRarityRBackgroundAssetPath"
+  ],
+  "MasterBandItem": [
+   "_id",
+   "_nameTextId",
+   "_descriptionTextId",
+   "_bandId",
+   "_resourceGroupId",
+   "_displayOrder"
+  ],
+  "MasterBandItemLevel": [
+   "_id",
+   "_bandItemId",
+   "_level",
+   "_playerRank"
+  ],
+  "MasterBandItemSkillEffect": [
+   "_id",
+   "_bandItemId",
+   "_level",
+   "_skillTargetIDs",
+   "_skillEffectType",
+   "_effectValue"
+  ],
+  "MasterChallengeLiveEventPoint": [
+   "_id",
+   "_group",
+   "_scoreRank",
+   "_value"
+  ],
+  "MasterChallengeLiveEventReward": [
+   "_id",
+   "_eventGroup",
+   "_group",
+   "_scoreRank",
+   "_resourceCount",
+   "_resourceType",
+   "_resourceId",
+   "_probability"
+  ],
+  "MasterChallengeMusic": [
+   "_id",
+   "_eventId",
+   "_liveMusicId",
+   "_musicType",
+   "_gekisouMission1",
+   "_gekisouMission2",
+   "_gekisouMission3",
+   "_rankingRewardGroup",
+   "_stratAt",
+   "_endAt"
+  ],
+  "MasterChallengeMusicBoostBonus": [
+   "_id",
+   "_consumedChallengePointCount",
+   "_playerExpRate",
+   "_memberCardExpRate",
+   "_friendshipExpRate",
+   "_eventPointRate",
+   "_liveMusicRewardRate"
+  ],
+  "MasterCharacter": [
+   "_id",
+   "_nameTextID",
+   "_shortNameTextID",
+   "_enDisplayNameTextId",
+   "_enDisplayShortNameTextId",
+   "_bandID",
+   "_displayOrder",
+   "_mainColorCode",
+   "_subColorCode",
+   "_instrumentTypes",
+   "_bandPart",
+   "_birthdayMonth",
+   "_birthdayDay",
+   "_voiceActorTextId",
+   "_descriptionTextId",
+   "_catchCopyTextId",
+   "_bloodTypeTextId",
+   "_heightTextId",
+   "_constellationTextId",
+   "_schoolTextId",
+   "_schoolClassTextId",
+   "_favoriteFoodTextId",
+   "_hobbyTextId",
+   "_isNonPlayable"
+  ],
+  "MasterCharacterRank": [
+   "_id",
+   "_rank",
+   "_exp",
+   "_bonus"
+  ],
+  "MasterCharacterTotalRank": [
+   "_id",
+   "_totalRank",
+   "_bonus"
+  ],
+  "MasterEvent": [
+   "_id",
+   "_nameTextId",
+   "_startAt",
+   "_endAt",
+   "_displayEndAt",
+   "_eventType",
+   "_storyChapterId",
+   "_eventItemId",
+   "_isRankingDisabled",
+   "_isMusicRankingDisabled",
+   "_isTotalMusicRankingDisabled",
+   "_liveEventRewardGroup",
+   "_liveEventPointGroup",
+   "_challengeLiveEventRewardGroup",
+   "_challengeLiveEventPointGroup",
+   "_gekisouLiveRankingEventPointGroup",
+   "_gekisouLiveRankingEventRewardGroup",
+   "_musicId",
+   "_imageAsset",
+   "_logoAsset",
+   "_backgroundAsset",
+   "_bannerAsset",
+   "_carouselHelpId"
+  ],
+  "MasterEventAchievementLoopReward": [
+   "_id",
+   "_eventId",
+   "_loopStartEventPoint",
+   "_loopEventPoint",
+   "_rewardIds"
+  ],
+  "MasterEventAchievementReward": [
+   "_id",
+   "_eventId",
+   "_eventPoint",
+   "_rewardIds"
+  ],
+  "MasterEventEffect": [
+   "_id",
+   "_eventId",
+   "_resourceTypeConstraint",
+   "_characterId",
+   "_bandId",
+   "_cardType",
+   "_tagId",
+   "_memberCardId",
+   "_supportCardId",
+   "_eventBonusType",
+   "_rank1EffectValue",
+   "_rank2EffectValue",
+   "_rank3EffectValue",
+   "_rank4EffectValue",
+   "_rank5EffectValue"
+  ],
+  "MasterGekisouSkill": [
+   "_id",
+   "_nameTextID",
+   "_descriptionTextFormatID",
+   "_skillIconID",
+   "_gekisouMissionType",
+   "_skillCategories",
+   "_displaySkillCategories",
+   "_skillDisplayCategories"
+  ],
+  "MasterGekisouSkillEffect": [
+   "_id",
+   "_gekisouSkillID",
+   "_level",
+   "_skillTriggerConditionGroup",
+   "_skillTriggerType",
+   "_skillConditionGroup",
+   "_skillReleaseConditionGroup",
+   "_skillTargetIDs",
+   "_skillEffectType",
+   "_activationTimeSecond",
+   "_effectValue",
+   "_maxEffectValue",
+   "_effectLimitCount",
+   "_skillCumulativeConditionID",
+   "_effectExecuteLimitCount",
+   "_effectExecuteLimitResetConditionGroup",
+   "_icon"
+  ],
+  "MasterGekisouSupportSkill": [
+   "_id",
+   "_nameTextID",
+   "_descriptionTextFormatID",
+   "_skillIconID",
+   "_gekisouSupportSkillExecTiming",
+   "_gekisouMissionType",
+   "_displaySkillCategories"
+  ],
+  "MasterGekisouSupportSkillEffect": [
+   "_id",
+   "_gekisouSupportSkillID",
+   "_level",
+   "_skillTriggerConditionGroup",
+   "_skillTriggerType",
+   "_skillConditionGroup",
+   "_skillCumulativeConditionID",
+   "_skillReleaseConditionGroup",
+   "_skillTargetIDs",
+   "_skillEffectType",
+   "_activationTimeSecond",
+   "_effectValue",
+   "_maxEffectValue",
+   "_effectLimitCount",
+   "_effectExecuteLimitCount",
+   "_effectExecuteLimitResetConditionGroup",
+   "_icon"
+  ],
+  "MasterLeaderSkillEffect": [
+   "_id",
+   "_leaderSkillID",
+   "_level",
+   "_skillConditionGroup",
+   "_skillTargetIDs",
+   "_skillEffectType",
+   "_effectValue",
+   "_skillCumulativeConditionID",
+   "_effectExecuteLimitCount",
+   "_effectExecuteLimitResetConditionGroup",
+   "_icon"
+  ],
+  "MasterLiveChallengePoint": [
+   "_id",
+   "_scoreRank",
+   "_value"
+  ],
+  "MasterLiveComboScoreBonus": [
+   "_id",
+   "_comboBonusType",
+   "_requiredComboCount",
+   "_bonusFactor"
+  ],
+  "MasterLiveEventPoint": [
+   "_id",
+   "_group",
+   "_scoreRank",
+   "_value"
+  ],
+  "MasterLiveEventReward": [
+   "_id",
+   "_eventGroup",
+   "_group",
+   "_scoreRank",
+   "_resourceCount",
+   "_resourceType",
+   "_resourceId",
+   "_probability"
+  ],
+  "MasterLiveGekisouLuckBasePoint": [
+   "_id",
+   "_noteCategory",
+   "_noteSimulateJudgement",
+   "_weight",
+   "_basePoint"
+  ],
+  "MasterLiveGekisouLuckBonusLot": [
+   "_id",
+   "_chanceLotType",
+   "_lotResult",
+   "_weight"
+  ],
+  "MasterLiveGekisouRankingScoreBonus": [
+   "_id",
+   "_missionPattern",
+   "_rank",
+   "_count",
+   "_scoreBonusPercent"
+  ],
+  "MasterLiveJudgementParameter": [
+   "_id",
+   "_noteSimulateJudgement",
+   "_scorePercent",
+   "_damage"
+  ],
+  "MasterLiveJudgementTiming": [
+   "_id",
+   "_assistLevel",
+   "_judgementPriority",
+   "_noteJudgementType",
+   "_noteSimulateJudgement",
+   "_beforeMs",
+   "_afterMs"
+  ],
+  "MasterLiveMusic": [
+   "_id",
+   "_phoneticTextID",
+   "_rubyTitleTextID",
+   "_sortOrder",
+   "_titleTextID",
+   "_bandIDs",
+   "_bandNameTextID",
+   "_vocalCharacterIDs",
+   "_musicType",
+   "_musicCategories",
+   "_bestMusicTagIDs",
+   "_musicSoundID",
+   "_jingleSoundID",
+   "_easyID",
+   "_normalID",
+   "_hardID",
+   "_expertID",
+   "_liveScoreRankGroup",
+   "_defaultUnlock",
+   "_unlockConditionID",
+   "_liveMusicPenLightColorID",
+   "_startAt",
+   "_lyricistTextID",
+   "_composerTextID",
+   "_arrangerTextID",
+   "_jacketAssetName",
+   "_musicVideoIDs",
+   "_vjVideoPattern",
+   "_anotherVocalIDs",
+   "_scoreRankRewardGroup",
+   "_comboRewardGroup",
+   "_gekisouMission1",
+   "_gekisouMission2",
+   "_gekisouMission3",
+   "_gekisouCallSe",
+   "_backgroundCameraType",
+   "_musicLightColorIDNormal",
+   "_musicLightColorIDChorus",
+   "_lazerLightMotionNormal",
+   "_lazerLightMotionChorus",
+   "_stageLightMotionNormal",
+   "_stageLightMotionChorus",
+   "_scoreCLiveMusicRewardID",
+   "_scoreBLiveMusicRewardID",
+   "_scoreALiveMusicRewardID",
+   "_scoreSLiveMusicRewardID",
+   "_scoreSSLiveMusicRewardID",
+   "_comboEasyLiveMusicRewardID",
+   "_comboNormalLiveMusicRewardID",
+   "_comboHardLiveMusicRewardID",
+   "_comboExpertLiveMusicRewardID"
+  ],
+  "MasterLiveMusicBoostBonus": [
+   "_id",
+   "_consumedLiveBoostCount",
+   "_playerExpRate",
+   "_memberCardExpRate",
+   "_friendshipExpRate",
+   "_eventPointRate",
+   "_liveMusicRewardRate",
+   "_circlePointRate",
+   "_characterRankExpRate",
+   "_livePointRate"
+  ],
+  "MasterLiveMusicScore": [
+   "_id",
+   "_musicScoreTextFileName",
+   "_musicScoreLevel",
+   "_musicScoreDisplayLevel",
+   "_fullComboCount"
+  ],
+  "MasterLiveNoteParameter": [
+   "_id",
+   "_noteOperateType",
+   "_scorePercent"
+  ],
+  "MasterLiveScoreRank": [
+   "_id",
+   "_group",
+   "_liveScoreRank",
+   "_requiredScore",
+   "_battleLiveRequiredScore"
+  ],
+  "MasterLiveSettings": [
+   "_id",
+   "_key",
+   "_value",
+   "_subValue"
+  ],
+  "MasterLiveSkill": [
+   "_id",
+   "_nameTextID",
+   "_descriptionTextFormatID",
+   "_skillIconID",
+   "_skillCategories",
+   "_displaySkillCategories",
+   "_skillDisplayCategories"
+  ],
+  "MasterLiveSkillEffect": [
+   "_id",
+   "_liveSkillID",
+   "_level",
+   "_skillConditionGroup",
+   "_skillReleaseConditionGroup",
+   "_skillTargetIDs",
+   "_skillEffectType",
+   "_activationTimeSecond",
+   "_effectValue",
+   "_maxEffectValue",
+   "_effectLimitCount",
+   "_skillCumulativeConditionID",
+   "_effectExecuteLimitCount",
+   "_effectExecuteLimitResetConditionGroup",
+   "_icon"
+  ],
+  "MasterMemberCard": [
+   "_id",
+   "_assetID",
+   "_nameTextID",
+   "_subtitleTextID",
+   "_characterID",
+   "_rarity",
+   "_cardType",
+   "_bestMusicTagIDs",
+   "_performancePowerMax",
+   "_technicPowerMax",
+   "_visualPowerMax",
+   "_memberCardLevelGroup",
+   "_memberCardAwakeGroup",
+   "_memberCardAwakeResourceGroup",
+   "_memberCardRankGroup",
+   "_rankUpItemID",
+   "_leaderSkillID",
+   "_liveSkillID",
+   "_gekisouSkillID",
+   "_liveSkillLevelResourceGroup",
+   "_gekisouSkillLevelResourceGroup",
+   "_gachaVoiceTextId",
+   "_gachaVoiceSoundId",
+   "_startAt"
+  ],
+  "MasterMemberCardAwake": [
+   "_id",
+   "_group",
+   "_awakeCount",
+   "_performanceRate",
+   "_technicRate",
+   "_visualRate"
+  ],
+  "MasterMemberCardLevel": [
+   "_id",
+   "_group",
+   "_level",
+   "_exp",
+   "_performanceRate",
+   "_technicRate",
+   "_visualRate"
+  ],
+  "MasterMemberCardLevelLimit": [
+   "_id",
+   "_rarity",
+   "_awakeCount",
+   "_limitLevel"
+  ],
+  "MasterMemberCardRank": [
+   "_id",
+   "_group",
+   "_rank",
+   "_requiredRankUpItemCount",
+   "_performanceRate",
+   "_technicRate",
+   "_visualRate",
+   "_leaderSkillLevel",
+   "_musicTypeBonusRate",
+   "_musicTagBonusRate"
+  ],
+  "MasterMemoryMemberLevel": [
+   "_id",
+   "_point",
+   "_performance",
+   "_technic",
+   "_visual"
+  ],
+  "MasterMemoryMusic": [
+   "_id",
+   "_groupId"
+  ],
+  "MasterMemoryMusicBonus": [
+   "_id",
+   "_groupId",
+   "_scoreRank",
+   "_performance",
+   "_technic",
+   "_visual"
+  ],
+  "MasterMemoryMusicGroup": [
+   "_id",
+   "_skillTargetIds"
+  ],
+  "MasterMemorySupportLevel": [
+   "_id",
+   "_point",
+   "_performance",
+   "_technic",
+   "_visual"
+  ],
+  "MasterParameter": [
+   "_id",
+   "_type",
+   "_value"
+  ],
+  "MasterSkillCondition": [
+   "_id",
+   "_conditionType",
+   "_conditionValues",
+   "_isPositive",
+   "_conditionTargetIDs"
+  ],
+  "MasterSkillConditionSet": [
+   "_id",
+   "_group",
+   "_conditionIds"
+  ],
+  "MasterSkillCumulativeCondition": [
+   "_id",
+   "_skillCumulativeConditionType",
+   "_conditionValues",
+   "_conditionTargetIDs",
+   "_maxCumulativeCount"
+  ],
+  "MasterSkillEffectSetting": [
+   "_id",
+   "_skillEffectType",
+   "_nameTextId",
+   "_phase"
+  ],
+  "MasterSkillTarget": [
+   "_id",
+   "_skillTargetType",
+   "_characterID",
+   "_bandID",
+   "_cardType",
+   "_tagID",
+   "_judgement",
+   "_liveMusicType",
+   "_gekisouMissionType",
+   "_liveSkillCategories",
+   "_gekisouSkillCategories"
+  ],
+  "MasterSupportCard": [
+   "_id",
+   "_assetID",
+   "_nameTextID",
+   "_descriptionTextID",
+   "_diaryTextID",
+   "_diarySoundId",
+   "_characterIDs",
+   "_rarity",
+   "_cardType",
+   "_performancePowerMax",
+   "_technicPowerMax",
+   "_visualPowerMax",
+   "_supportCardLevelGroup",
+   "_supportCardRankGroup",
+   "_supportSkillId01",
+   "_supportSkillId02",
+   "_gekisouSupportSkillId01",
+   "_gekisouSupportSkillId02",
+   "_startAt"
+  ],
+  "MasterSupportCardLevel": [
+   "_id",
+   "_group",
+   "_level",
+   "_exp",
+   "_performanceRate",
+   "_technicRate",
+   "_visualRate"
+  ],
+  "MasterSupportCardRank": [
+   "_id",
+   "_group",
+   "_rank",
+   "_limitLevel",
+   "_requiredRankUpItemCount",
+   "_supportSkill01Level",
+   "_supportSkill02Level",
+   "_gekisouSupportSkill01Level",
+   "_gekisouSupportSkill02Level",
+   "_cardTypeLinkBonusRate"
+  ],
+  "MasterSupportSkill": [
+   "_id",
+   "_nameTextID",
+   "_descriptionTextFormatID",
+   "_skillIconID",
+   "_displaySkillCategories"
+  ],
+  "MasterSupportSkillEffect": [
+   "_id",
+   "_supportSkillID",
+   "_level",
+   "_skillTriggerConditionGroup",
+   "_skillTriggerType",
+   "_skillConditionGroup",
+   "_skillReleaseConditionGroup",
+   "_skillTargetIDs",
+   "_skillEffectType",
+   "_activationTimeSecond",
+   "_effectValue",
+   "_maxEffectValue",
+   "_effectLimitCount",
+   "_skillCumulativeConditionID",
+   "_effectExecuteLimitCount",
+   "_effectExecuteLimitResetConditionGroup",
+   "_icon"
+  ],
+  "MasterVip": [
+   "_id",
+   "_vipRank",
+   "_point",
+   "_productsPrice"
+  ],
+  "MasterVipRankBonus": [
+   "_id",
+   "_vipRank",
+   "_vipBonusType",
+   "_value"
+  ]
+ }
+}

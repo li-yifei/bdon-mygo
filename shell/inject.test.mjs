@@ -41,3 +41,15 @@ test('title bar keeps clear of the window controls via mygo inset variables', as
   assert.match(source, /var\(--mygo-titlebar-inset-right, 0px\)/);
   assert.doesNotMatch(source, /--mygo-titlebar-(left|right)\b/);
 });
+test('an engine of another model than the page keeps the page solver',async()=>{
+ const sha=Buffer.from(await webcrypto.subtle.digest('SHA-256',new TextEncoder().encode('{}'))).toString('hex');
+ const init={type:'init',protocol:'moenotes.deck-worker/1',deckDataUrl:'https://storage.bdon.moe/data.json',deckDataBytes:2,deckDataSha256:sha,modelCommit:'page'};
+ for(const [failure,fallback] of [['Error: engine-model-mismatch: the engine implements a, the page b',true],['Error: disk full',false]]){
+  const {context,OriginalWorker}=fixture();const posted=[];OriginalWorker.prototype.postMessage=function(m){posted.push(m);};
+  const call=context.mygo.call;context.mygo.call=async(method,...args)=>{if(method.endsWith('Prepare'))throw new Error(failure);return call(method,...args);};
+  const worker=new context.Worker('/deck/deck-worker.js');const events=[];worker.onmessage=e=>events.push(e.data);
+  worker.postMessage(init);
+  if(fallback){await worker.ready;assert.ok(worker.delegate instanceof OriginalWorker);assert.equal(posted[0],init);assert.equal(context.ournotesNative.engine,'bdon-original');assert.match(context.ournotesNative.lastFallbackError,/engine-model-mismatch/);}
+  else{await assert.rejects(worker.ready,/disk full/);assert.equal(events[0].type,'failed');assert.equal(worker.delegate,null);}
+ }
+});

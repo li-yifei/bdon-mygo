@@ -24,6 +24,27 @@ type nativeDeck struct {
 	jobs         map[string]nativeSearchJob
 	nativeSolver bool
 	openSettings func()
+	// mismatch is the last model gap Prepare refused, or nil.
+	mismatch *engineModelMismatch
+}
+
+// engineModelMismatch names an engine whose model differs from the page's.
+// The page then keeps its own solver, so results match the site.
+type engineModelMismatch struct {
+	Engine, Page string
+}
+
+// errEngineModelMismatch prefixes the error the page script recognizes to
+// fall back to the page's own solver.
+const errEngineModelMismatch = "engine-model-mismatch"
+
+func (s *nativeDeck) modelMismatch() *engineModelMismatch {
+	if s == nil {
+		return nil
+	}
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return s.mismatch
 }
 
 func (s *nativeDeck) UseNativeSolver() bool {
@@ -199,14 +220,30 @@ func (s *nativeDeck) Prepare(dataText, expectedSHA, modelCommit string) (nativeR
 	if modelCommit != "" && (info.ModelCommit == nil || *info.ModelCommit != modelCommit) {
 		return nativeReady{}, errors.New("deck data model commit mismatch")
 	}
+	// An engine of another model than the page's would rank teams differently.
+	// Engines that do not declare their model are the user's explicit choice.
+	if modelCommit != "" && rust.model != "" && rust.model != modelCommit {
+		s.mu.Lock()
+		s.mismatch = &engineModelMismatch{Engine: rust.model, Page: modelCommit}
+		s.mu.Unlock()
+		return nativeReady{}, fmt.Errorf("%s: the engine implements %s, the page %s", errEngineModelMismatch, shortCommit(rust.model), shortCommit(modelCommit))
+	}
 	s.mu.Lock()
 	if s.datasets == nil {
 		s.datasets = map[string]string{}
 	}
 	s.datasets[id] = path
+	s.mismatch = nil
 	s.mu.Unlock()
 	return nativeReady{DatasetID: id, InitMS: float64(time.Since(start).Microseconds()) / 1000, CapabilitiesJSON: rust.take(rust.capabilities())}, nil
 }
+func shortCommit(commit string) string {
+	if len(commit) > 12 {
+		return commit[:12]
+	}
+	return commit
+}
+
 func (s *nativeDeck) Recommend(datasetID, accountJSON, requestJSON string) (string, error) {
 	if len(accountJSON) > 16<<20 || len(requestJSON) > 1<<20 || !json.Valid([]byte(accountJSON)) || !json.Valid([]byte(requestJSON)) {
 		return "", errors.New("invalid native solver input")

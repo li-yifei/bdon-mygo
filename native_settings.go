@@ -15,6 +15,7 @@ import (
 	"github.com/egoist/mygo/ui"
 
 	"github.com/li-yifei/bdon-mygo/internal/i18n"
+	"github.com/li-yifei/bdon-mygo/internal/supplement"
 )
 
 var nativeSettingsWindow *mygo.Window
@@ -1077,6 +1078,38 @@ func (s *nativeSettingsState) renderLanguageSelect(c *ui.Context) {
 	})
 }
 
+const actionSupplement = "supplement"
+
+// updateGameData rebuilds the game data supplement from the chosen device and
+// hands it to the page.
+func (s *nativeSettingsState) updateGameData() {
+	serial, pkg := s.serial, strings.TrimSpace(s.packageName)
+	s.work(actionSupplement, "supplement.progress", "supplement.failed", func() (func(), error) {
+		if serial == "" || pkg == "" {
+			return nil, i18n.New("supplement.error.select")
+		}
+		message, err := s.adb.UpdateGameData(serial, pkg)
+		if err != nil {
+			return nil, err
+		}
+		s.resources.mu.RLock()
+		root := s.resources.path
+		s.resources.mu.RUnlock()
+		if _, err = s.parent.Page().Eval(supplement.ReloadScript(root)); err != nil {
+			return nil, err
+		}
+		return func() { s.succeed(msg("supplement.updated"), message) }, nil
+	})
+}
+
+// engineMismatch is the model gap the page's last Prepare met, if any.
+func (s *nativeSettingsState) engineMismatch() *engineModelMismatch {
+	if s.engines == nil {
+		return nil
+	}
+	return s.engines.native.modelMismatch()
+}
+
 func (s *nativeSettingsState) renderAdvanced(c *ui.Context) {
 	t := c.Theme()
 	section := func(title, note string) {
@@ -1097,6 +1130,9 @@ func (s *nativeSettingsState) renderAdvanced(c *ui.Context) {
 				ui.Spinner(c).Label(i18n.T("settings.progress.engine"))
 			}
 		})
+		if m := s.engineMismatch(); m != nil {
+			ui.Text(c, i18n.T("settings.engine.outdated", "engine", shortCommit(m.Engine), "page", shortCommit(m.Page))).FontSize(12).TextColor(t.Warning).Wrap()
+		}
 	})
 
 	ui.Column(c.Key("adv-transport")).Gap(8).FillWidth().Children(func() {
@@ -1125,6 +1161,11 @@ func (s *nativeSettingsState) renderAdvanced(c *ui.Context) {
 			ui.Text(c, i18n.T("settings.transport.releaseHelp", "transport", transportModeLabel("direct-usb"))).FontSize(12).TextColor(t.TextMuted).Wrap()
 			s.actionButton(c, actionRelease, i18n.T("settings.transport.release"), false, s.deviceBusy() || s.serial == "", s.releaseUSB)
 		}
+	})
+
+	ui.Column(c.Key("adv-supplement")).Gap(8).FillWidth().Children(func() {
+		section(i18n.T("supplement.title"), i18n.T("supplement.note"))
+		s.actionButton(c, actionSupplement, i18n.T("supplement.update"), false, s.deviceBusy() || s.serial == "", s.updateGameData)
 	})
 
 	s.renderPaths(c, section)

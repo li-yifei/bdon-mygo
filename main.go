@@ -33,6 +33,12 @@ var shellPreload string
 //go:embed shell/window.js
 var windowPreload string
 
+// bundledEngineModel is the upstream ournotes-deck commit whose model the
+// pinned engine implements, for engines that do not report one themselves.
+//
+//go:embed docs/native-engine-model.txt
+var bundledEngineModel string
+
 type rustDeck struct {
 	jobStart         func(*byte, *byte, *byte) *byte
 	jobPoll          func(*byte) *byte
@@ -44,6 +50,9 @@ type rustDeck struct {
 	recommend        func(*byte, *byte, *byte) *byte
 	summary          func(*byte, *byte) *byte
 	free             func(*byte)
+	// model is the upstream ournotes-deck commit whose model the engine
+	// implements, or "" when unknown.
+	model string
 }
 
 func loadRust(path string) (*rustDeck, error) {
@@ -79,6 +88,12 @@ func loadRust(path string) (*rustDeck, error) {
 				purego.RegisterLibFunc(&api.jobCancel, lib, "ournotes_account_job_cancel_json")
 			}
 		}
+	}
+	var capabilities struct {
+		ModelCommit string `json:"modelCommit"`
+	}
+	if json.Unmarshal([]byte(api.take(api.capabilities())), &capabilities) == nil {
+		api.model = capabilities.ModelCommit
 	}
 	return api, nil
 }
@@ -482,6 +497,9 @@ func main() {
 		if rust, err = loadRust(lib); err != nil {
 			log.Fatal(err)
 		}
+		if rust.model == "" {
+			rust.model = strings.TrimSpace(bundledEngineModel)
+		}
 	}
 	path := dirs.Data
 	// Earlier releases kept storage inside the macOS bundle; other platforms
@@ -525,7 +543,7 @@ func main() {
 			TrafficLightPosition: &mygo.Point{X: 16, Y: 15}, TitleBarHeight: 44,
 			BackgroundColor: "#0f1a2e",
 			URL:             "https://bdon.moe/tools/deck",
-			Page:            mygo.PageOptions{TrustedOrigins: []string{"https://bdon.moe"}, PreloadScript: productPreload() + i18n.Preload() + extensionPreloadScript(path) + shellPreload + "\n" + windowPreload},
+			Page:            mygo.PageOptions{TrustedOrigins: []string{"https://bdon.moe"}, PreloadScript: productPreload() + i18n.Preload() + supplementPreload(path) + extensionPreloadScript(path) + shellPreload + "\n" + windowPreload},
 		})
 		win.Page().OnPageTitleUpdated(func(e *mygo.TitleEvent) { e.PreventDefault() })
 		importSave := func() error {

@@ -44,7 +44,11 @@ func TestScriptMessageKeys(t *testing.T) {
 		t.Fatal(err)
 	}
 	keys := map[string]bool{}
-	for _, m := range regexp.MustCompile(`\bt\('(\w+)'`).FindAllStringSubmatch(string(inject), -1) {
+	supplement, err := os.ReadFile("shell/supplement.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, m := range regexp.MustCompile(`\bt\('([\w.]+)'`).FindAllStringSubmatch(string(inject)+string(supplement), -1) {
 		keys[m[1]] = true
 	}
 	for _, m := range regexp.MustCompile(`messages\.(\w+)`).FindAllStringSubmatch(string(window), -1) {
