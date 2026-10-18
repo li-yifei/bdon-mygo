@@ -4,7 +4,7 @@ go 1.27.1
 
 require (
 	github.com/ebitengine/purego v0.11.1
-	github.com/egoist/mygo v0.4.8
+	github.com/egoist/mygo v0.5.5
 	github.com/google/gousb v1.1.3
 	github.com/hashicorp/mdns v1.0.5
 	github.com/pgaskin/go-adb v0.0.0-20260909040028-2bc9b939919d
@@ -20,5 +20,6 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	golang.org/x/image v0.46.0 // indirect
 	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 )

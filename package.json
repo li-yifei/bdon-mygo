@@ -1,6 +1,6 @@
 {
   "name": "bdon-mygo",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,6 +11,6 @@
     "dev:pairing": "bash scripts/dev-pairing.sh"
   },
   "devDependencies": {
-    "mygo-cli": "0.4.8"
+    "mygo-cli": "0.5.5"
   }
 }
